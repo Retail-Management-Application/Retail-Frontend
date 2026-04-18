@@ -1,0 +1,19 @@
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-loader',
+  template: `
+    <div *ngIf="isLoading"
+         class="position-fixed top-0 start-0 w-100 h-100 d-flex
+                justify-content-center align-items-center"
+         style="background:rgba(0,0,0,0.3);z-index:9999">
+      <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  `
+})
+export class LoaderComponent {
+  @Input() isLoading = false;
+}
+

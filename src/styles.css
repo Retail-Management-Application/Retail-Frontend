@@ -1,0 +1,47 @@
+/* Global Styles — Retail Ordering */
+
+:root {
+  --primary:   #1E3A5F;
+  --accent:    #F4A225;
+  --light-bg:  #F8F9FA;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: var(--light-bg);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: #162d4b;
+  border-color: #162d4b;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.product-img {
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.badge-stock-low  { background-color: #dc3545; }
+.badge-stock-ok   { background-color: #198754; }
+
+router-outlet + * {
+  padding: 1.5rem;
+}
+
