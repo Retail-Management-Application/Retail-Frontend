@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,10 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkAuth();
+    // Re-check on every route change so navbar stays in sync after login/logout
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => this.checkAuth());
   }
 
   checkAuth(): void {
@@ -25,6 +30,17 @@ export class NavbarComponent implements OnInit {
       const parsed   = JSON.parse(user);
       this.isAdmin   = parsed.role === 'Admin';
       this.userName  = parsed.fullName;
+    } else {
+      this.isAdmin  = false;
+      this.userName = '';
+    }
+  }
+
+  goToDashboard(): void {
+    if (this.isAdmin) {
+      this.router.navigate(['/products/admin']);
+    } else {
+      this.router.navigate(['/products/dashboard']);
     }
   }
 
@@ -33,4 +49,3 @@ export class NavbarComponent implements OnInit {
     this.router.navigate(['/auth/login']);
   }
 }
-

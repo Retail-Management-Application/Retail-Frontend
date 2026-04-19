@@ -1,0 +1,123 @@
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h4 class="fw-bold mb-0">🛍️ Manage Products</h4>
+      <small class="text-muted">{{ totalCount }} total products</small>
+    </div>
+    <button class="btn btn-dark fw-bold" (click)="createProduct()">➕ Add Product</button>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert alert-success alert-dismissible" *ngIf="successMsg">
+    ✅ {{ successMsg }}
+    <button type="button" class="btn-close" (click)="successMsg=''"></button>
+  </div>
+  <div class="alert alert-danger" *ngIf="errorMsg">❌ {{ errorMsg }}</div>
+
+  <!-- Search -->
+  <div class="row mb-3">
+    <div class="col-12 col-md-4">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search products..." [(ngModel)]="searchTerm" (keyup.enter)="onSearch()">
+        <button class="btn btn-outline-secondary" (click)="onSearch()">Search</button>
+      </div>
+    </div>
+    <div class="col-auto">
+      <a routerLink="/products/admin" class="btn btn-outline-secondary">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="text-center py-4" *ngIf="isLoading">
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-responsive" *ngIf="!isLoading">
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Brand</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of products">
+          <td>{{ p.productId }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <img [src]="p.imageUrl || 'https://via.placeholder.com/40x40?text=P'"
+                   style="width:40px;height:40px;object-fit:cover;border-radius:6px;"
+                   [alt]="p.name">
+              <span class="fw-semibold">{{ p.name }}</span>
+            </div>
+          </td>
+          <td><span class="badge bg-secondary">{{ p.categoryName }}</span></td>
+          <td>{{ p.brandName }}</td>
+          <td class="fw-bold text-success">₹{{ p.price }}</td>
+          <td>
+            <span [class.text-danger]="p.stock === 0"
+                  [class.text-warning]="p.stock > 0 && p.stock <= 5"
+                  [class.text-success]="p.stock > 5"
+                  class="fw-semibold">{{ p.stock }}</span>
+          </td>
+          <td>
+            <span class="badge" [class.bg-success]="p.isActive" [class.bg-secondary]="!p.isActive">
+              {{ p.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-1" (click)="editProduct(p.productId)">✏️</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(p)"
+              data-bs-toggle="modal" data-bs-target="#deleteModal">🗑️</button>
+          </td>
+        </tr>
+        <tr *ngIf="products.length === 0">
+          <td colspan="8" class="text-center text-muted py-4">No products found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <button class="page-link" (click)="goToPage(currentPage - 1)">←</button>
+      </li>
+      <li class="page-item" *ngFor="let p of pages" [class.active]="p === currentPage">
+        <button class="page-link" (click)="goToPage(p)">{{ p }}</button>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <button class="page-link" (click)="goToPage(currentPage + 1)">→</button>
+      </li>
+    </ul>
+  </nav>
+
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" (click)="cancelDelete()"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete <strong>{{ deleteTargetName }}</strong>? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteProduct()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
