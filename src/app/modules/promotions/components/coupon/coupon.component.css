@@ -1,0 +1,104 @@
+.coupon-container {
+  background: #f8f9fb;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 500px;
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.coupon-container h3 {
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Input Row */
+.coupon-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Input */
+.coupon-input-row input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  outline: none;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.coupon-input-row input:focus {
+  border-color: #f4b400;
+  box-shadow: 0 0 0 2px rgba(244, 180, 0, 0.2);
+}
+
+/* Apply Button */
+.btn-apply {
+  background-color: #f4b400;
+  color: #000;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.btn-apply:hover {
+  background-color: #e0a800;
+}
+
+.btn-apply:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Remove Button */
+.btn-remove {
+  background-color: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-remove:hover {
+  background-color: #d9363e;
+}
+
+/* Error Message */
+.error-msg {
+  margin-top: 10px;
+  color: #d32f2f;
+  background: #fdecea;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* Success Box */
+.coupon-success {
+  margin-top: 15px;
+  background: #e6f4ea;
+  border: 1px solid #b7e1c1;
+  padding: 12px;
+  border-radius: 8px;
+  color: #2e7d32;
+  font-size: 14px;
+}
+
+.coupon-success p {
+  margin: 4px 0;
+}
+
+/* Strong text highlight */
+.coupon-success strong {
+  color: #1b5e20;
+}
