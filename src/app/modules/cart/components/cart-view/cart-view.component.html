@@ -1,1 +1,63 @@
-<p>cart-view works!</p>
+<div class="container py-4">
+  <h2 class="mb-4">🛒 Your Cart</h2>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <div *ngIf="!loading">
+
+    <!-- Empty state -->
+    <div *ngIf="!cart || cart.items.length === 0" class="text-center py-5">
+      <p class="text-muted fs-5">Your cart is empty.</p>
+      <a routerLink="/products" class="btn btn-primary">Browse Products</a>
+    </div>
+
+    <!-- Cart items -->
+    <div *ngIf="cart && cart.items.length > 0">
+      <div *ngIf="message" class="alert alert-danger">{{ message }}</div>
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of cart.items">
+              <td>{{ item.productName }}</td>
+              <td>Rs. {{ item.price | number:'1.2-2' }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>Rs. {{ item.subtotal | number:'1.2-2' }}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-danger"
+                        (click)="remove(item.cartItemId)">
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="fw-bold text-end">Total:</td>
+              <td class="fw-bold">Rs. {{ cart.total | number:'1.2-2' }}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between mt-3">
+        <button class="btn btn-outline-secondary" (click)="clear()">Clear Cart</button>
+        <button class="btn btn-primary px-4" (click)="checkout()">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
