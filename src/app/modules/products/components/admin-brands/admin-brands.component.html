@@ -1,0 +1,112 @@
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0">🏷️ Manage Brands</h4>
+    <a routerLink="/products/admin" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMsg">✅ {{ successMsg }}</div>
+  <div class="alert alert-danger" *ngIf="errorMsg">❌ {{ errorMsg }}</div>
+
+  <div class="row g-4">
+
+    <!-- Form -->
+    <div class="col-12 col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-header fw-bold bg-dark text-white">
+          {{ isEditMode ? '✏️ Edit Brand' : '➕ Add New Brand' }}
+        </div>
+        <div class="card-body">
+          <form [formGroup]="form" (ngSubmit)="submitForm()">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Brand Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="brandName"
+                [class.is-invalid]="isInvalid('brandName')">
+              <div class="invalid-feedback">Name is required (2–100 chars).</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Description</label>
+              <textarea class="form-control" formControlName="description" rows="3"
+                [class.is-invalid]="isInvalid('description')"></textarea>
+              <div class="invalid-feedback">Max 500 characters.</div>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-dark flex-fill" [disabled]="isSaving">
+                <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1"></span>
+                {{ isEditMode ? 'Update' : 'Create' }}
+              </button>
+              <button type="button" class="btn btn-outline-secondary" *ngIf="isEditMode" (click)="reset()">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="col-12 col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header fw-bold bg-dark text-white d-flex justify-content-between">
+          <span>All Brands</span>
+          <span class="badge bg-secondary">{{ brands.length }}</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="text-center py-4" *ngIf="isLoading">
+            <div class="spinner-border" role="status"></div>
+          </div>
+          <table class="table table-hover mb-0 align-middle" *ngIf="!isLoading">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Brand Name</th>
+                <th>Description</th>
+                <th>Products</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let brand of brands">
+                <td>{{ brand.brandId }}</td>
+                <td class="fw-semibold">{{ brand.brandName }}</td>
+                <td class="text-muted small">{{ brand.description || '—' }}</td>
+                <td><span class="badge bg-primary">{{ brand.productCount }}</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1" (click)="editBrand(brand)">✏️</button>
+                  <button class="btn btn-sm btn-outline-danger"
+                    [disabled]="brand.productCount > 0"
+                    [title]="brand.productCount > 0 ? 'Cannot delete — has products' : 'Delete'"
+                    (click)="confirmDelete(brand)"
+                    data-bs-toggle="modal" data-bs-target="#deleteBrandModal">🗑️</button>
+                </td>
+              </tr>
+              <tr *ngIf="brands.length === 0">
+                <td colspan="5" class="text-center text-muted py-3">No brands found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteBrandModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Delete Brand</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" (click)="cancelDelete()"></button>
+      </div>
+      <div class="modal-body">
+        Delete brand <strong>{{ deleteTargetName }}</strong>? This cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteBrand()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

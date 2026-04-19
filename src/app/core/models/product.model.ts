@@ -3,10 +3,14 @@ export interface Product {
   name:         string;
   description:  string;
   price:        number;
+  categoryId:   number;       // ← added
   categoryName: string;
+  brandId:      number;       // ← added
   brandName:    string;
   imageUrl:     string | null;
-  stock:        number;
+  isActive:     boolean;      // ← added
+  createdAt:    string;       // ← added
+  stock:        number;       // maps to QuantityInStock from backend
 }
 
 export interface CreateProductDto {
@@ -16,7 +20,9 @@ export interface CreateProductDto {
   categoryId:   number;
   brandId:      number;
   imageUrl:     string | null;
+  isActive:     boolean;
   initialStock: number;
+  reorderLevel: number;
 }
 
 export interface ProductFilter {
@@ -36,4 +42,3 @@ export interface PagedResult<T> {
   hasPrevious: boolean;
   hasNext:     boolean;
 }
-

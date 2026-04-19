@@ -1,0 +1,142 @@
+<div class="container-fluid py-4">
+
+  <!-- Welcome Banner -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card bg-dark text-white">
+        <div class="card-body py-4">
+          <h2 class="card-title mb-1">👋 Welcome back, {{ userName }}!</h2>
+          <p class="card-text text-white-50 mb-3">Explore our latest pizzas, cold drinks & breads.</p>
+          <button class="btn btn-warning fw-bold" (click)="goToProducts()">
+            🛍️ Browse All Products
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Stats Row -->
+  <div class="row mb-4 g-3">
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <div class="fs-2">🍕</div>
+          <div class="fw-bold fs-4">{{ categories.length }}</div>
+          <div class="text-muted small">Categories</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <div class="fs-2">🏷️</div>
+          <div class="fw-bold fs-4">{{ brands.length }}</div>
+          <div class="text-muted small">Brands</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <div class="fs-2">🛒</div>
+          <div class="fw-bold fs-4">--</div>
+          <div class="text-muted small">My Cart</div>
+          <a routerLink="/cart" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <div class="fs-2">📦</div>
+          <div class="fw-bold fs-4">--</div>
+          <div class="text-muted small">My Orders</div>
+          <a routerLink="/cart/orders" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links (Teammate modules - placeholders) -->
+  <div class="row mb-4 g-3">
+    <div class="col-12">
+      <h5 class="fw-bold">Quick Links</h5>
+    </div>
+    <div class="col-6 col-md-3">
+      <a routerLink="/cart" class="btn btn-outline-primary w-100">🛒 Go to Cart</a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a routerLink="/cart/orders" class="btn btn-outline-secondary w-100">📦 Order History</a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a routerLink="/promotions" class="btn btn-outline-warning w-100">🎁 Offers & Coupons</a>
+    </div>
+    <div class="col-6 col-md-3">
+      <a routerLink="/auth/profile" class="btn btn-outline-info w-100">👤 My Profile</a>
+    </div>
+  </div>
+
+  <!-- Shop by Category -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="fw-bold mb-3">Shop by Category</h5>
+    </div>
+    <div class="col-6 col-md-3 mb-3" *ngFor="let cat of categories">
+      <div class="card text-center h-100 border-0 shadow-sm" style="cursor:pointer"
+           (click)="goToCategory(cat.categoryId)">
+        <div class="card-body">
+          <div class="fs-3 mb-2">🍽️</div>
+          <div class="fw-semibold">{{ cat.categoryName }}</div>
+          <div class="text-muted small">{{ cat.productCount }} items</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 text-center" *ngIf="categories.length === 0 && !isLoading">
+      <span class="text-muted">No categories found.</span>
+    </div>
+  </div>
+
+  <!-- Featured Products -->
+  <div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold mb-0">Featured Products</h5>
+      <a routerLink="/products" class="btn btn-sm btn-outline-dark">View All →</a>
+    </div>
+
+    <div class="col-12 text-center py-4" *ngIf="isLoading">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div class="col-12 text-center text-danger" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+    <div class="col-6 col-md-4 col-lg-2 mb-3" *ngFor="let product of featuredProducts">
+      <div class="card h-100 shadow-sm" style="cursor:pointer" (click)="viewProduct(product.productId)">
+        <img
+          [src]="product.imageUrl || 'https://via.placeholder.com/150x120?text=No+Image'"
+          class="card-img-top"
+          style="height:120px; object-fit:cover;"
+          [alt]="product.name">
+        <div class="card-body p-2">
+          <div class="fw-semibold small text-truncate">{{ product.name }}</div>
+          <div class="text-muted small">{{ product.categoryName }}</div>
+          <div class="fw-bold text-success mt-1">₹{{ product.price }}</div>
+          <div class="small text-muted">Stock: {{ product.stock }}</div>
+        </div>
+        <div class="card-footer p-2 bg-transparent border-0">
+          <button class="btn btn-sm btn-warning w-100" (click)="$event.stopPropagation()">
+            🛒 Add to Cart
+            <a routerLink="/cart" class="stretched-link"></a>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 text-center"
+         *ngIf="featuredProducts.length === 0 && !isLoading && !errorMsg">
+      <span class="text-muted">No products available yet.</span>
+    </div>
+  </div>
+
+</div>

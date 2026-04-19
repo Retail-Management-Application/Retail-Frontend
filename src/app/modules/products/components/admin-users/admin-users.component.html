@@ -1,0 +1,125 @@
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0">👥 Manage Users</h4>
+    <a routerLink="/products/admin" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="errorMsg">❌ {{ errorMsg }}</div>
+
+  <!-- Stats Row -->
+  <div class="row mb-4 g-3" *ngIf="!isLoading && users.length > 0">
+    <div class="col-6 col-md-3">
+      <div class="card text-center border-dark">
+        <div class="card-body py-3">
+          <div class="fw-bold fs-3">{{ users.length }}</div>
+          <div class="text-muted small">Total Users</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center border-danger">
+        <div class="card-body py-3">
+          <div class="fw-bold fs-3 text-danger">{{ adminCount }}</div>
+          <div class="text-muted small">Admins</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center border-primary">
+        <div class="card-body py-3">
+          <div class="fw-bold fs-3 text-primary">{{ customerCount }}</div>
+          <div class="text-muted small">Customers</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center border-success">
+        <div class="card-body py-3">
+          <div class="fw-bold fs-3 text-success">{{ activeCount }}</div>
+          <div class="text-muted small">Active</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="row mb-3 g-2">
+    <div class="col-12 col-md-4">
+      <input type="text" class="form-control" placeholder="Search by name or email..."
+        [(ngModel)]="searchTerm" (keyup)="onSearch()">
+    </div>
+    <div class="col-auto">
+      <div class="btn-group" role="group">
+        <button class="btn btn-outline-dark"
+          [class.active]="roleFilter === 'All'"
+          (click)="onRoleFilter('All')">All</button>
+        <button class="btn btn-outline-danger"
+          [class.active]="roleFilter === 'Admin'"
+          (click)="onRoleFilter('Admin')">Admins</button>
+        <button class="btn btn-outline-primary"
+          [class.active]="roleFilter === 'Customer'"
+          (click)="onRoleFilter('Customer')">Customers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="text-center py-4" *ngIf="isLoading">
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm" *ngIf="!isLoading">
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers">
+            <td>{{ user.userId }}</td>
+            <td class="fw-semibold">{{ user.fullName }}</td>
+            <td class="text-muted">{{ user.email }}</td>
+            <td>{{ user.phoneNumber || '—' }}</td>
+            <td>
+              <!-- Role badge -->
+<span class="badge"
+  [class.bg-danger]="user.role === 1"
+  [class.bg-primary]="user.role === 0">
+  {{ user.role === 1 ? 'Admin' : 'Customer' }}
+</span>
+            </td>
+            <td>
+              <span class="badge"
+                [class.bg-success]="user.isActive"
+                [class.bg-secondary]="!user.isActive">
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="text-muted small">{{ user.createdAt | date:'mediumDate' }}</td>
+          </tr>
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="7" class="text-center text-muted py-4">
+              No users match your search.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="text-muted small mt-2" *ngIf="!isLoading">
+    Showing {{ filteredUsers.length }} of {{ users.length }} users.
+    <em>Note: Full user management (activate/deactivate, role change) is handled by the Auth module.</em>
+  </p>
+
+</div>

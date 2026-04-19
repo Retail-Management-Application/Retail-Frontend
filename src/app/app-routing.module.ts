@@ -24,7 +24,7 @@ const routes: Routes = [
   // Module 3 — Cart & Orders (Member B)
   {
     path: 'cart',
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     loadChildren: () =>
       import('./modules/cart/cart.module').then(m => m.CartModule)
   },
@@ -32,7 +32,7 @@ const routes: Routes = [
   // Module 4 — Promotions (Member B)
   {
     path: 'promotions',
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     loadChildren: () =>
       import('./modules/promotions/promotions.module').then(m => m.PromotionsModule)
   },

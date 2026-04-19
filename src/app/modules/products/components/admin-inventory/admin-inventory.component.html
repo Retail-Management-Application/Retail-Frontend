@@ -1,0 +1,184 @@
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0">📦 Inventory Management</h4>
+    <a routerLink="/products/admin" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMsg">✅ {{ successMsg }}</div>
+  <div class="alert alert-danger" *ngIf="errorMsg">❌ {{ errorMsg }}</div>
+
+  <!-- Search by Product ID -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header fw-bold bg-dark text-white">🔍 Look Up Inventory by Product ID</div>
+    <div class="card-body">
+      <div class="row g-2 align-items-start">
+        <div class="col-12 col-md-4">
+          <div class="input-group">
+            <input type="number" class="form-control" placeholder="Enter Product ID..."
+              [(ngModel)]="searchProductId" (keyup.enter)="searchInventory()">
+            <button class="btn btn-dark" (click)="searchInventory()" [disabled]="isSearching">
+              <span *ngIf="isSearching" class="spinner-border spinner-border-sm me-1"></span>
+              Search
+            </button>
+          </div>
+          <small class="text-danger" *ngIf="searchError">{{ searchError }}</small>
+        </div>
+        <div class="col-12 col-md-8" *ngIf="searchedInventory">
+          <div class="card border-success">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h6 class="fw-bold mb-1">{{ searchedInventory.productName }}</h6>
+                  <div class="d-flex gap-3 flex-wrap">
+                    <span>
+                      Stock:
+                      <strong [class.text-danger]="searchedInventory.isLowStock"
+                              [class.text-success]="!searchedInventory.isLowStock">
+                        {{ searchedInventory.quantityInStock }}
+                      </strong>
+                    </span>
+                    <span>Reorder Level: <strong>{{ searchedInventory.reorderLevel }}</strong></span>
+                    <span>Last Updated: <em class="text-muted small">{{ searchedInventory.lastUpdated | date:'short' }}</em></span>
+                    <span *ngIf="searchedInventory.isLowStock" class="badge bg-danger align-self-center">⚠️ Low Stock</span>
+                  </div>
+                </div>
+                <div class="col-auto d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-primary"
+                    (click)="openUpdate(searchedInventory)"
+                    data-bs-toggle="modal" data-bs-target="#updateModal">Set Stock</button>
+                  <button class="btn btn-sm btn-outline-warning"
+                    (click)="openAdjust(searchedInventory)"
+                    data-bs-toggle="modal" data-bs-target="#adjustModal">Adjust</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Low Stock Alerts -->
+  <div class="card shadow-sm">
+    <div class="card-header fw-bold bg-danger text-white d-flex justify-content-between align-items-center">
+      <span>⚠️ Low Stock Alerts</span>
+      <span class="badge bg-white text-danger">{{ lowStockItems.length }}</span>
+    </div>
+    <div class="card-body p-0">
+      <div class="text-center py-4" *ngIf="isLoading">
+        <div class="spinner-border text-danger" role="status"></div>
+      </div>
+      <div class="alert alert-success m-3" *ngIf="!isLoading && lowStockItems.length === 0">
+        ✅ All products are sufficiently stocked!
+      </div>
+      <table class="table table-hover mb-0 align-middle" *ngIf="!isLoading && lowStockItems.length > 0">
+        <thead class="table-light">
+          <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>In Stock</th>
+            <th>Reorder Level</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inv of lowStockItems" class="table-warning">
+            <td>{{ inv.productId }}</td>
+            <td class="fw-semibold">{{ inv.productName }}</td>
+            <td>
+              <span class="badge bg-danger fs-6">{{ inv.quantityInStock }}</span>
+            </td>
+            <td>{{ inv.reorderLevel }}</td>
+            <td class="text-muted small">{{ inv.lastUpdated | date:'short' }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1"
+                (click)="openUpdate(inv)"
+                data-bs-toggle="modal" data-bs-target="#updateModal">Set Stock</button>
+              <button class="btn btn-sm btn-outline-warning"
+                (click)="openAdjust(inv)"
+                data-bs-toggle="modal" data-bs-target="#adjustModal">Adjust</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Adjust Stock Modal -->
+<div class="modal fade" id="adjustModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title">⚖️ Adjust Stock — {{ adjustTargetName }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="cancelAdjust()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="adjustForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Adjustment <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="adjustment"
+              placeholder="e.g. +50 to add, -10 to deduct"
+              [class.is-invalid]="isInvalidAdjust('adjustment')">
+            <div class="invalid-feedback">Adjustment is required.</div>
+            <small class="text-muted">Positive = add stock, Negative = deduct stock</small>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="reason"
+              placeholder="e.g. Received delivery, Damaged goods"
+              [class.is-invalid]="isInvalidAdjust('reason')">
+            <div class="invalid-feedback">Reason is required.</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelAdjust()">Cancel</button>
+        <button class="btn btn-warning fw-bold" data-bs-dismiss="modal"
+          (click)="submitAdjust()" [disabled]="isAdjusting">
+          <span *ngIf="isAdjusting" class="spinner-border spinner-border-sm me-1"></span>
+          Apply Adjustment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Set Stock Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">📦 Set Inventory — {{ updateTargetName }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" (click)="cancelUpdate()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="updateForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Quantity in Stock <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="quantityInStock" min="0"
+              [class.is-invalid]="isInvalidUpdate('quantityInStock')">
+            <div class="invalid-feedback">Must be 0 or more.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Reorder Level <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="reorderLevel" min="0"
+              [class.is-invalid]="isInvalidUpdate('reorderLevel')">
+            <div class="invalid-feedback">Must be 0 or more.</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelUpdate()">Cancel</button>
+        <button class="btn btn-primary fw-bold" data-bs-dismiss="modal"
+          (click)="submitUpdate()" [disabled]="isUpdating">
+          <span *ngIf="isUpdating" class="spinner-border spinner-border-sm me-1"></span>
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

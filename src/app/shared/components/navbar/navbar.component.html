@@ -9,13 +9,26 @@
   <div class="collapse navbar-collapse" id="navMenu">
     <ul class="navbar-nav me-auto">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/products" routerLinkActive="active">Products</a>
+        <a class="nav-link" routerLink="/products" routerLinkActive="active"
+           [routerLinkActiveOptions]="{exact: true}">Products</a>
       </li>
       <li class="nav-item" *ngIf="isLoggedIn">
         <a class="nav-link" routerLink="/cart" routerLinkActive="active">🛒 Cart</a>
       </li>
       <li class="nav-item" *ngIf="isLoggedIn">
-        <a class="nav-link" routerLink="/promotions" routerLinkActive="active">Offers</a>
+        <a class="nav-link" routerLink="/promotions" routerLinkActive="active">🎁 Offers</a>
+      </li>
+      <!-- Admin quick links -->
+      <li class="nav-item dropdown" *ngIf="isAdmin">
+        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">⚙️ Admin</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" routerLink="/products/admin">Dashboard</a></li>
+          <li><a class="dropdown-item" routerLink="/products/admin/products">Products</a></li>
+          <li><a class="dropdown-item" routerLink="/products/admin/categories">Categories</a></li>
+          <li><a class="dropdown-item" routerLink="/products/admin/brands">Brands</a></li>
+          <li><a class="dropdown-item" routerLink="/products/admin/inventory">Inventory</a></li>
+          <li><a class="dropdown-item" routerLink="/products/admin/users">Users</a></li>
+        </ul>
       </li>
     </ul>
 
@@ -28,16 +41,20 @@
       </li>
       <li class="nav-item dropdown" *ngIf="isLoggedIn">
         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-          {{ userName }}
+          <span class="badge bg-danger me-1" *ngIf="isAdmin">Admin</span>{{ userName }}
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" routerLink="/auth/profile">Profile</a></li>
-          <li><a class="dropdown-item" routerLink="/cart/orders">Order History</a></li>
+          <li>
+            <a class="dropdown-item fw-semibold" (click)="goToDashboard()" style="cursor:pointer">
+              🏠 My Dashboard
+            </a>
+          </li>
+          <li><a class="dropdown-item" routerLink="/auth/profile">👤 Profile</a></li>
+          <li><a class="dropdown-item" routerLink="/cart/orders">📦 Order History</a></li>
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item text-danger" (click)="logout()">Logout</a></li>
+          <li><a class="dropdown-item text-danger" (click)="logout()" style="cursor:pointer">🚪 Logout</a></li>
         </ul>
       </li>
     </ul>
   </div>
 </nav>
-
