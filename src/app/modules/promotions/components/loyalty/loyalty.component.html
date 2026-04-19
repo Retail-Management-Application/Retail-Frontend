@@ -1,1 +1,26 @@
-<p>loyalty works!</p>
+<div class="loyalty-container">
+
+  <h3>🎁 Your Loyalty Points</h3>
+
+  <div *ngIf="isLoading" class="loading">
+    Loading your points...
+  </div>
+
+  <div *ngIf="!isLoading && loyalty" class="loyalty-card">
+    <div class="points-display">
+      <span class="points-number">{{ loyalty.points }}</span>
+      <span class="points-label">Points</span>
+    </div>
+    <p class="last-updated">
+      Last updated: {{ loyalty.lastUpdated | date: 'mediumDate' }}
+    </p>
+    <p class="points-hint">
+      💡 Earn points on every order. Points are awarded after order confirmation.
+    </p>
+  </div>
+
+  <p class="error-msg" *ngIf="!isLoading && errorMessage">
+    ❌ {{ errorMessage }}
+  </p>
+
+</div>

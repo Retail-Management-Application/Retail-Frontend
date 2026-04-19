@@ -1,1 +1,41 @@
-<p>coupon works!</p>
+<div class="coupon-container">
+
+  <h3>Apply Coupon</h3>
+
+  <div class="coupon-input-row">
+    <input
+      type="text"
+      [(ngModel)]="couponCode"
+      placeholder="Enter coupon code"
+      [disabled]="isApplied"
+      (keyup.enter)="validateCoupon()"
+    />
+    <button
+      (click)="validateCoupon()"
+      [disabled]="isLoading || isApplied"
+      class="btn-apply"
+    >
+      {{ isLoading ? 'Checking...' : 'Apply' }}
+    </button>
+    <button
+      *ngIf="isApplied"
+      (click)="clearCoupon()"
+      class="btn-remove"
+    >
+      Remove
+    </button>
+  </div>
+
+  <!-- Error -->
+  <p class="error-msg" *ngIf="errorMessage">
+    ❌ {{ errorMessage }}
+  </p>
+
+  <!-- Success -->
+  <div class="coupon-success" *ngIf="couponResult && isApplied">
+    <p>✅ Coupon <strong>{{ couponResult.code }}</strong> applied!</p>
+    <p>Discount: <strong>{{ couponResult.discountPercent }}%</strong></p>
+    <p>Valid until: {{ couponResult.expiryDate | date: 'mediumDate' }}</p>
+  </div>
+
+</div>
