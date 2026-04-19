@@ -1,19 +1,30 @@
+// src/app/core/guards/admin.guard.ts
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, UrlTree } from '@angular/router';
+import { AuthService } from '../../modules/auth/services/auth.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AdminGuard implements CanActivate {
-  constructor(private router: Router) {}
 
-  canActivate(): boolean {
-    // const user = localStorage.getItem('user');
-    // if (user) {
-    //   const parsed = JSON.parse(user);
-    //   if (parsed.role === 'Admin') return true;
-    // }
-    // this.router.navigate(['/products']);
-    // return false;
-    return true; // Temporarily disabled for testing
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  canActivate(): boolean | UrlTree {
+    const user = this.authService.getCurrentUser();
+
+    if (user && user.role === 'Admin') {
+      return true;
+    }
+
+    if (!user) {
+      return this.router.createUrlTree(['/auth/login']);
+    }
+
+    // Logged in but not Admin → back to products
+    return this.router.createUrlTree(['/products']);
   }
 }
-
