@@ -1,39 +1,30 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from '../../modules/auth/services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private router: Router) {}
 
-  // Temporarily disabled for testing
-  // intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-  //   const token = localStorage.getItem('token');
+  constructor(private authService: AuthService) {}
 
-  //   const cloned = token
-  //     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-  //     : req;
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const token = this.authService.getToken();
 
-  //   return next.handle(cloned).pipe(
-  //     catchError((err: HttpErrorResponse) => {
-  //       if (err.status === 401) {
-  //         localStorage.clear();
-  //         this.router.navigate(['/auth/login']);
-  //       }
-  //       return throwError(() => err);
-  //     })
-  //   );
-  // }
+    if (token) {
+      const cloned = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return next.handle(cloned);
+    }
 
-  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // Add a mock token to bypass backend auth for testing
-    const mockToken = 'mock-test-token-' + Date.now();
-    const cloned = req.clone({ setHeaders: { Authorization: `Bearer ${mockToken}` } });
-    return next.handle(cloned);
+    return next.handle(req);
   }
 }
-
