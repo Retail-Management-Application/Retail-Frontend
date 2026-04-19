@@ -1,1 +1,83 @@
-<p>product-detail works!</p>
+<div class="container py-4">
+
+  <!-- Loading -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <div class="spinner-border text-secondary" role="status"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="alert alert-danger" *ngIf="errorMsg">
+    {{ errorMsg }}
+    <button class="btn btn-sm btn-outline-danger ms-3" (click)="goBack()">← Back</button>
+  </div>
+
+  <!-- Product Detail -->
+  <div *ngIf="product && !isLoading">
+    <button class="btn btn-outline-secondary btn-sm mb-3" (click)="goBack()">← Back to Products</button>
+
+    <div class="row g-4">
+      <!-- Image -->
+      <div class="col-12 col-md-5">
+        <img
+          [src]="product.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'"
+          class="img-fluid rounded shadow"
+          [alt]="product.name"
+          style="width:100%; max-height:350px; object-fit:cover;">
+      </div>
+
+      <!-- Info -->
+      <div class="col-12 col-md-7">
+        <h2 class="fw-bold">{{ product.name }}</h2>
+
+        <div class="mb-2">
+          <span class="badge bg-secondary me-2">{{ product.categoryName }}</span>
+          <span class="badge bg-light text-dark border">{{ product.brandName }}</span>
+        </div>
+
+        <p class="text-muted">{{ product.description }}</p>
+
+        <div class="fs-3 fw-bold text-success mb-3">₹{{ product.price }}</div>
+
+        <div class="mb-3">
+          <span class="fw-semibold">Availability: </span>
+          <span *ngIf="product.stock > 5" class="text-success fw-bold">✅ In Stock ({{ product.stock }} left)</span>
+          <span *ngIf="product.stock > 0 && product.stock <= 5" class="text-warning fw-bold">⚠️ Low Stock ({{ product.stock }} left)</span>
+          <span *ngIf="product.stock === 0" class="text-danger fw-bold">❌ Out of Stock</span>
+        </div>
+
+        <!-- Quantity Selector -->
+        <div class="d-flex align-items-center gap-3 mb-4" *ngIf="product.stock > 0">
+          <div class="input-group" style="width: 130px;">
+            <button class="btn btn-outline-secondary" (click)="decreaseQty()">−</button>
+            <input type="number" class="form-control text-center" [value]="quantity" readonly>
+            <button class="btn btn-outline-secondary" (click)="increaseQty()">+</button>
+          </div>
+          <button class="btn btn-warning fw-bold px-4">
+            🛒 Add to Cart
+            <a routerLink="/cart" class="stretched-link"></a>
+          </button>
+        </div>
+
+        <button class="btn btn-secondary" *ngIf="product.stock === 0" disabled>Out of Stock</button>
+
+        <!-- Metadata -->
+        <hr>
+        <div class="row text-muted small">
+          <div class="col-6">Product ID: #{{ product.productId }}</div>
+          <div class="col-6">Category: {{ product.categoryName }}</div>
+          <div class="col-6">Brand: {{ product.brandName }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related quick-links -->
+    <div class="row mt-5">
+      <div class="col-12">
+        <h5 class="fw-bold mb-3">You might also like</h5>
+        <a routerLink="/products" class="btn btn-outline-dark me-2">← All Products</a>
+        <a routerLink="/promotions" class="btn btn-outline-warning">🎁 Check Offers</a>
+      </div>
+    </div>
+  </div>
+
+</div>
