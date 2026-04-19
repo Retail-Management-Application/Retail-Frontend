@@ -1,1 +1,155 @@
-<p>register works!</p>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Create Account</h2>
+      <p>Join us and start shopping</p>
+    </div>
+
+    <!-- Success Alert -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <span class="alert-icon">✓</span>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <span class="alert-icon">!</span>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input
+          id="fullName"
+          type="text"
+          formControlName="fullName"
+          placeholder="John Doe"
+          [class.invalid]="fullNameCtrl.invalid && fullNameCtrl.touched"
+          autocomplete="name"
+        />
+        <div *ngIf="fullNameCtrl.invalid && fullNameCtrl.touched" class="error-msg">
+          <span *ngIf="fullNameCtrl.errors?.['required']">Full name is required</span>
+          <span *ngIf="fullNameCtrl.errors?.['minlength']">Name must be at least 2 characters</span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          [class.invalid]="emailCtrl.invalid && emailCtrl.touched"
+          autocomplete="email"
+        />
+        <div *ngIf="emailCtrl.invalid && emailCtrl.touched" class="error-msg">
+          <span *ngIf="emailCtrl.errors?.['required']">Email is required</span>
+          <span *ngIf="emailCtrl.errors?.['email']">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input
+          id="phoneNumber"
+          type="tel"
+          formControlName="phoneNumber"
+          placeholder="+1 234 567 8900"
+          [class.invalid]="phoneNumberCtrl.invalid && phoneNumberCtrl.touched"
+          autocomplete="tel"
+        />
+        <div *ngIf="phoneNumberCtrl.invalid && phoneNumberCtrl.touched" class="error-msg">
+          <span *ngIf="phoneNumberCtrl.errors?.['required']">Phone number is required</span>
+          <span *ngIf="phoneNumberCtrl.errors?.['pattern']">Please enter a valid phone number</span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Min 6 chars, upper, lower & digit"
+            [class.invalid]="passwordCtrl.invalid && passwordCtrl.touched"
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="hidePassword = !hidePassword"
+          >
+            {{ hidePassword ? 'Show' : 'Hide' }}
+          </button>
+        </div>
+        <div *ngIf="passwordCtrl.invalid && passwordCtrl.touched" class="error-msg">
+          <span *ngIf="passwordCtrl.errors?.['required']">Password is required</span>
+          <span *ngIf="passwordCtrl.errors?.['minlength']">Password must be at least 6 characters</span>
+          <span *ngIf="passwordCtrl.errors?.['pattern']">
+            Must contain uppercase, lowercase, and digit
+          </span>
+        </div>
+        <!-- Strength Meter -->
+        <div *ngIf="passwordCtrl.value" class="strength-meter">
+          <div class="strength-bars">
+            <div
+              *ngFor="let i of [1,2,3,4]"
+              class="bar"
+              [class.active]="i <= passwordStrength"
+              [class.weak]="passwordStrength === 1 && i <= 1"
+              [class.fair]="passwordStrength === 2 && i <= 2"
+              [class.good]="passwordStrength === 3 && i <= 3"
+              [class.strong]="passwordStrength === 4 && i <= 4"
+            ></div>
+          </div>
+          <span class="strength-label" [ngClass]="strengthLabel.toLowerCase()">{{ strengthLabel }}</span>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="password-wrapper">
+          <input
+            id="confirmPassword"
+            [type]="hideConfirmPassword ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            placeholder="Re-enter your password"
+            [class.invalid]="(confirmPasswordCtrl.invalid && confirmPasswordCtrl.touched) || hasPasswordMismatch"
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="hideConfirmPassword = !hideConfirmPassword"
+          >
+            {{ hideConfirmPassword ? 'Show' : 'Hide' }}
+          </button>
+        </div>
+        <div *ngIf="hasPasswordMismatch" class="error-msg">
+          <span>Passwords do not match</span>
+        </div>
+        <div *ngIf="confirmPasswordCtrl.invalid && confirmPasswordCtrl.touched && !hasPasswordMismatch" class="error-msg">
+          <span *ngIf="confirmPasswordCtrl.errors?.['required']">Please confirm your password</span>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary" [disabled]="loading">
+        <span *ngIf="loading" class="spinner"></span>
+        {{ loading ? 'Creating Account...' : 'Create Account' }}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a routerLink="/auth/login">Sign in</a></p>
+    </div>
+  </div>
+</div>

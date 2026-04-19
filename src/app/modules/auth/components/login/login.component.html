@@ -1,1 +1,69 @@
-<p>login works!</p>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Welcome Back</h2>
+      <p>Sign in to your account</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <span class="alert-icon">!</span>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          [class.invalid]="emailCtrl.invalid && emailCtrl.touched"
+          autocomplete="email"
+        />
+        <div *ngIf="emailCtrl.invalid && emailCtrl.touched" class="error-msg">
+          <span *ngIf="emailCtrl.errors?.['required']">Email is required</span>
+          <span *ngIf="emailCtrl.errors?.['email']">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter your password"
+            [class.invalid]="passwordCtrl.invalid && passwordCtrl.touched"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="hidePassword = !hidePassword"
+            aria-label="Toggle password visibility"
+          >
+            {{ hidePassword ? 'Show' : 'Hide' }}
+          </button>
+        </div>
+        <div *ngIf="passwordCtrl.invalid && passwordCtrl.touched" class="error-msg">
+          <span *ngIf="passwordCtrl.errors?.['required']">Password is required</span>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary" [disabled]="loading">
+        <span *ngIf="loading" class="spinner"></span>
+        {{ loading ? 'Signing in...' : 'Sign In' }}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Don't have an account? <a routerLink="/auth/register">Create one</a></p>
+    </div>
+  </div>
+</div>

@@ -9,7 +9,7 @@ export interface User {
   isActive:    boolean;
 }
 
-export interface RegisterDto {
+export interface RegisterRequest {
   fullName:    string;
   email:       string;
   password:    string;
@@ -17,7 +17,7 @@ export interface RegisterDto {
   address:     string;
 }
 
-export interface LoginDto {
+export interface LoginRequest {
   email:    string;
   password: string;
 }
@@ -27,5 +27,40 @@ export interface AuthResponse {
   fullName: string;
   email:    string;
   role:     string;
+    refreshToken: string;
+  tokenExpiry: string;
 }
 
+export interface UpdateProfileRequest {
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  address?: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export interface UserProfile {
+  userId: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface UserListItem {
+  userId: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+}
