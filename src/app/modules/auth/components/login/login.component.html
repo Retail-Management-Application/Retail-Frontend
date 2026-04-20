@@ -1,33 +1,74 @@
 <div class="auth-container">
-  <h2>Login</h2>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="auth-card">
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" placeholder="you@example.com"/>
-      <span class="error"
-        *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
-        Valid email is required.
-      </span>
+    <div class="auth-header">
+      <div class="auth-icon">🔐</div>
+      <h2>Welcome back</h2>
+      <p class="auth-subtitle">Sign in to your account</p>
     </div>
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input id="password" type="password" formControlName="password" placeholder="••••••••"/>
-      <span class="error"
-        *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
-        Password is required.
-      </span>
-    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-    <span class="error" *ngIf="errorMsg">{{ errorMsg }}</span>
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <span class="input-icon">✉</span>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            [class.input-error]="email?.invalid && email?.touched"
+          />
+        </div>
+        <span class="error" *ngIf="email?.touched && email?.hasError('required')">
+          Email is required.
+        </span>
+        <span class="error" *ngIf="email?.touched && email?.hasError('email')">
+          Invalid email format.
+        </span>
+      </div>
 
-    <button type="submit" [disabled]="loading">
-      {{ loading ? 'Logging in…' : 'Login' }}
-    </button>
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Enter your password"
+            [class.input-error]="password?.invalid && password?.touched"
+          />
+          <span class="toggle-eye" (click)="togglePassword()">
+            {{ showPassword ? '🙈' : '👁' }}
+          </span>
+        </div>
+        <span class="error" *ngIf="password?.touched && password?.hasError('required')">
+          Password is required.
+        </span>
+      </div>
 
-  </form>
+      <!-- Server error -->
+      <div class="server-error" *ngIf="errorMsg">
+        ⚠ {{ errorMsg }}
+      </div>
 
-  <p>Don't have an account? <a routerLink="/auth/register">Register</a></p>
+      <!-- Submit -->
+      <button type="submit" [disabled]="loading" class="btn-primary">
+        <span *ngIf="!loading">Sign In</span>
+        <span *ngIf="loading" class="spinner"></span>
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      Don't have an account?
+      <a routerLink="/auth/register">Create one</a>
+    </p>
+
+  </div>
 </div>

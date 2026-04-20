@@ -10,7 +10,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class AuthService {
 
-  private readonly API = `${environment.apiUrl}/auth`;
+  private readonly API = `${environment.apiUrl}/api/auth`;
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY  = 'auth_user';
 
