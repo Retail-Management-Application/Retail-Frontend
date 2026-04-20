@@ -11,22 +11,34 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
 
   form: FormGroup;
-  loading = false;
-  errorMsg = '';
+  loading      = false;
+  errorMsg     = '';
+  showPassword = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb:          FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router:      Router
   ) {
     this.form = this.fb.group({
       email:    ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['',  Validators.required]
     });
   }
 
+  // ── Getters for clean template access ──────────────────
+  get email()    { return this.form.get('email');    }
+  get password() { return this.form.get('password'); }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   onSubmit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.loading  = true;
     this.errorMsg = '';
@@ -34,11 +46,9 @@ export class LoginComponent {
     this.authService.login(this.form.value).subscribe({
       next: (res) => {
         this.loading = false;
-        if (res.role === 'Admin') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/products']);
-        }
+        res.role === 'Admin'
+          ? this.router.navigate(['/admin'])
+          : this.router.navigate(['/products']);
       },
       error: (err) => {
         this.loading  = false;
